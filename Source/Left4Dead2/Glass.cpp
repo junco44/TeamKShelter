@@ -34,10 +34,7 @@ void AGlass::Tick(float DeltaTime)
 
 void AGlass::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//AJuno_CPPCharacter* Character = Cast<AJuno_CPPCharacter>(OtherActor);
-	//if (Character)
-	//{
-		//Destroy();
-	//}
+	Destroy();
+
 }
 
