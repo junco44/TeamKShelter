@@ -107,6 +107,6 @@ protected:
 		void ControlDoor(float Value);
 
 	float Height = 955.f;
-	float Location = 160.f;
+	float Location = 130.f;
 
 };

@@ -59,18 +59,9 @@ AElevator::AElevator()
 	Light2->SetupAttachment(RootComponent);
 
 	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
-	//static ConstructorHelpers::FObjectFinder<UCurveFloat> DoorCurveObject(TEXT("/Script/Engine.CurveFloat'/Game/Blueprints/ElevatorDoorCurveFloat.ElevatorDoorCurveFloat'"));
-	//if (DoorCurveObject.Succeeded())
-	//{
-	//	ElevatorDoorCurveFloat = DoorCurveObject.Object;
-	//}
 
 	ElevatorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ElevatorTimeline"));
-	//static ConstructorHelpers::FObjectFinder<UCurveFloat> ElevatorCurveObject(TEXT("/Script/Engine.CurveFloat'/Game/Blueprints/ElevatorCurveFloat.ElevatorCurveFloat'"));
-	//if (ElevatorCurveObject.Succeeded())
-	//{
-	//	ElevatorCurveFloat = ElevatorCurveObject.Object;
-	//}
+
 }
 
 // Called when the game starts or when spawned
@@ -88,12 +79,6 @@ void AElevator::BeginPlay()
 	TimelineProgress2.BindUFunction(this, FName("ControlElevator"));
 	ElevatorTimeline->AddInterpFloat(ElevatorCurveFloat, TimelineProgress2);
 
-	//if (ElevatorCurveFloat)
-	//{
-	//	FOnTimelineFloat TimelineProgress2;
-	//	TimelineProgress2.BindDynamic(this, &AElevator::GoUp);
-	//	Timeline.AddInterpFloat(ElevatorCurveFloat, TimelineProgress2);
-	//}
 }
 
 // Called every frame
@@ -136,10 +121,10 @@ void AElevator::ControlElevator(float Value)
 
 void AElevator::ControlDoor(float Value)
 {
-	FVector LeftDoorInitialLocation = FVector(-187.f, -100.f, -10.f);
-	FVector LeftDoorTargetLocation = FVector(-187.f, -100.f - Location, -10.f);
-	FVector RightDoorInitialLocation = FVector(-187.f, 100.f, -10.f);
-	FVector RightDoorTargetLocation = FVector(-187.f, 100.f + Location, -10.f);
+	FVector LeftDoorInitialLocation = FVector(-180.f, 86.f, 200.f);
+	FVector LeftDoorTargetLocation = FVector(-180.f - Location, 86.f, 200.f);
+	FVector RightDoorInitialLocation = FVector(-50.f, 86.f, 200.f);
+	FVector RightDoorTargetLocation = FVector(-50.f + Location, 86.f, 200.f);
 
 	FVector NewLeftDoorLocation = FMath::Lerp(LeftDoorInitialLocation, LeftDoorTargetLocation, Value);
 	FVector NewRightDoorLocation = FMath::Lerp(RightDoorInitialLocation, RightDoorTargetLocation, Value);
