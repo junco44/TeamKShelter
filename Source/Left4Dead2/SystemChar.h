@@ -44,8 +44,8 @@ public:
 	// Sets default values for this character's properties
 	ASystemChar();
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	//int32 ID = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	int32 ID = 0;
 
 	//virtual FGenericTeamId GetGenericTeamId() const override;
 
@@ -103,5 +103,9 @@ private:
 	FOnFindSessionsCompleteDelegate FindSessionsCompleteDelegate;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 	FOnJoinSessionCompleteDelegate JoinSessionCompleteDelegate;
+
+	class UAIPerceptionStimuliSourceComponent* stimulus;
+	void setup_stimulus();
+
 
 };

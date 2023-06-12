@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
+#include "Math/UnrealMathUtility.h"
 #include "InteractInterface.h"
+#include "Net/UnrealNetwork.h"
 #include "Door2.generated.h"
 
 UCLASS()
@@ -17,15 +19,6 @@ public:
 	// Sets default values for this actor's properties
 	ADoor2();
 
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
-		class UBoxComponent* BoxCollision;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* DoorFrame;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		UStaticMeshComponent* LeftDoor;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		UStaticMeshComponent* RightDoor;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,22 +29,44 @@ public:
 
 	virtual void MyInteract_Implementation() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Door")
+	void OpenDoor();
+
+	UPROPERTY(EditAnywhere, Category = "Door")
+	class UTimelineComponent* DoorTimeline;
+
 private:
 
 
 protected:
-	FTimeline Timeline;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		UCurveFloat* CurveFloat;
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	class UBoxComponent* BoxCollision;
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	class UStaticMeshComponent* DoorFrame;
+	UPROPERTY(VisibleAnywhere, Category = "Mesh", Replicated)
+	UStaticMeshComponent* LeftDoor;
+	UPROPERTY(VisibleAnywhere, Category = "Mesh", Replicated)
+	UStaticMeshComponent* RightDoor;
+	
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_OpenDoor();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSyncDoorState(bool bNewDoorState);
+	UFUNCTION()
+	void OnRep_bIsOpen();
 
-	bool bIsDoorClosed = true;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(EditAnywhere)
-		float DoorRotateAngle = 90.f;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Door")
+	UCurveFloat* CurveFloat;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
+	bool bIsOpen = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
+	float DoorRotateAngle = 90.f;
 
 	UFUNCTION()
-		void OpenDoor(float Value);
+	void ControlDoor(float Value);
 
-	bool bDoorOnSameSide;
-	void SetDoorOnSameSide();
 };

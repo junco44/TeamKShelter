@@ -3,7 +3,6 @@
 
 #include "BasicZombie.h"
 #include "SystemChar.h"
-#include "AIController_BasicZombie.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
@@ -11,6 +10,7 @@
 #include <Net/UnrealNetwork.h>
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void ABasicZombie::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -22,8 +22,12 @@ ABasicZombie::ABasicZombie()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	AIControllerClass = AAIController_BasicZombie::StaticClass();
+
+	ActorHasTag("Zombie");
+
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BODY"));
@@ -52,29 +56,31 @@ ABasicZombie::ABasicZombie()
 
 void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASystemChar* PlayerCharacter = Cast<ASystemChar>(OtherActor);
+	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
 	if (OtherActor != this)
 	{
-		HasOverlapped = true;
-		UE_LOG(LogTemp, Warning, TEXT("Begin Overlap : Called"));
-
-		do
+		if (OtherActor && PlayerCharacter && PlayerCharacter->IsA<ASystemChar>())
 		{
-			UGameplayStatics::ApplyDamage(PlayerCharacter, 3.0f, ABasicZombie::GetController(), nullptr, NULL);
+			HasOverlapped = true;
+			UE_LOG(LogTemp, Warning, TEXT("Begin Overlap : Called"));
 
-			UE_LOG(LogTemp, Warning, TEXT("Damage Applied to Player : Called"));
-		} while (AttackTimer >= 0.8f);
-		
+			do
+			{
+				UGameplayStatics::ApplyDamage(PlayerCharacter, 3.0f, ABasicZombie::GetController(), nullptr, NULL);
+
+				UE_LOG(LogTemp, Warning, TEXT("Damage Applied to Player : Called"));
+			} while (AttackTimer >= 0.8f);
+		}
 	}
 }
 
 void ABasicZombie::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	ASystemChar* PlayerCharacter = Cast<ASystemChar>(OtherActor);
-
+	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (OtherActor != this)
 	{
+		if (OtherActor && PlayerCharacter && PlayerCharacter->IsA<ASystemChar>())
 		HasOverlapped = false;
 		UE_LOG(LogTemp, Warning, TEXT("End Overlap : Called"));
 	}
@@ -91,34 +97,34 @@ void ABasicZombie::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 void ABasicZombie::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 float ABasicZombie::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	ASystemChar* PlayerCharacter = Cast<ASystemChar>(DamageCauser);
-
+	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	AController* const PlayerController = PlayerCharacter->GetController();
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
-	if (UGameplayStatics::GetPlayerController(EventInstigator, 0))
+	
+	if (DamageCauser && PlayerCharacter && PlayerCharacter->IsA<ASystemChar>() && EventInstigator && PlayerController)
 	{
+		//UGameplayStatics::GetPlayerController(PlayerCharacter->GetController(), 0);
+		
 		CurHP = CurHP - Damage;
 
 		UE_LOG(LogTemp, Warning, TEXT("CurHP = CurHP - Damage : Called"));
+		
+		do
+		{
+			UE_LOG(LogTemp, Warning, TEXT("CurHP = 0.0, flag == true : Called"));
+			StartCount = true;
+			flag = true;
+
+			Body->SetSimulatePhysics(true);
+			GetCharacterMovement()->StopMovementImmediately();
+			GetCharacterMovement()->StopActiveMovement();
+
+		} while (CurHP <= 0.0f && flag == false);
 	}
-
-	if (CurHP <= 0.0f && flag == false)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CurHP = 0.0, flag == true : Called"));
-		StartCount = true;
-		flag = true;
-
-		Body->SetSimulatePhysics(true);
-		GetCharacterMovement()->StopMovementImmediately();
-		GetCharacterMovement()->StopActiveMovement();
-
-	}
-
 
 	return 0.0f;
 }

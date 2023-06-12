@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SystemChar.h"
 #include "GameFramework/Character.h"
 #include "GenericTeamAgentInterface.h"
 #include "BasicZombie.generated.h"
@@ -54,8 +55,8 @@ public:
 	UFUNCTION()
 	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	//int32 ID = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	int32 ID = 0;
 
 	//virtual FGenericTeamId GetGenericTeamId() const override;
 
@@ -75,6 +76,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	ASystemChar* PlayerCharacter_CPP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* Body;
