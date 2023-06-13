@@ -31,15 +31,35 @@ void ACollapsingFloor::Tick(float DeltaTime)
 
 }
 
-void ACollapsingFloor::FloorCollapsing1()
+void ACollapsingFloor::FloorCollapsing()
+{
+	if (ROLE_Authority)
+	{
+		Server_FloorCollapsing_Implementation();
+	}
+}
+
+void ACollapsingFloor::Server_FloorCollapsing_Implementation()
+{
+	Multicast_FloorCollapsing_Implementation();
+}
+
+bool ACollapsingFloor::Server_FloorCollapsing_Validate()
+{
+	return true;
+}
+
+void ACollapsingFloor::Multicast_FloorCollapsing_Implementation()
 {
 	Floor->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Floor->SetVisibility(false);
 }
 
-void ACollapsingFloor::FloorCollapsing2()
+void ACollapsingFloor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Floor->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Floor->SetVisibility(false);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACollapsingFloor, Floor);
 }
+
 

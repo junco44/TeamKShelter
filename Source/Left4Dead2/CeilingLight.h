@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/RectLightComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "CeilingLight.generated.h"
 
 UCLASS()
@@ -17,15 +19,6 @@ public:
 	// Sets default values for this actor's properties
 	ACeilingLight();
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* LightBody;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* Light;
-	UPROPERTY(VisibleAnywhere, Category = "Light")
-		class URectLightComponent* LightComp;
-	UPROPERTY(VisibleAnywhere, Category = "Light")
-		class URectLightComponent* LightComp2;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,11 +27,31 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Function")
+	void LightOff();
+	
+	UFUNCTION(BlueprintCallable, Category = "Function")
+	void LightOn();
+
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	class UStaticMeshComponent* LightBody;
+	UPROPERTY(VisibleAnywhere, Category = "Mesh", Replicated)
+	class UStaticMeshComponent* Light;
+	UPROPERTY(VisibleAnywhere, Category = "Light", Replicated)
+	class URectLightComponent* LightComp;
+	UPROPERTY(VisibleAnywhere, Category = "Light")
+	class URectLightComponent* LightComp2;
 
-	UFUNCTION(BlueprintCallable, Category = "Function")
-		void LightOff();
-	UFUNCTION(BlueprintCallable, Category = "Function")
-		void LightOn();
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_LightOff();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_LightOff();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_LightOn();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_LightOn();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

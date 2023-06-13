@@ -3,10 +3,7 @@
 
 #include "ElevatorButton.h"
 #include "Components/BoxComponent.h"
-#include "CeilingLight.h"
-#include "CollapsingFloor.h"
-#include "Elevator.h"
-#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 AElevatorButton::AElevatorButton()
 {
@@ -56,7 +53,7 @@ void AElevatorButton::MyInteract_Implementation()
 
 		if (CollapsingFloor)
 		{
-			CollapsingFloor->FloorCollapsing1();
+			CollapsingFloor->FloorCollapsing();
 			UE_LOG(LogTemp, Warning, TEXT("The Room4(1st)'s floor is Collapsed!"));
 			UE_LOG(LogTemp, Warning, TEXT("You should solve the Task!"));
 		}
@@ -82,5 +79,12 @@ void AElevatorButton::SetTask(bool bFlag)
 {
 	bDidTask = bFlag;
 
+}
+
+void AElevatorButton::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AElevatorButton, bDidTask);
 }
 

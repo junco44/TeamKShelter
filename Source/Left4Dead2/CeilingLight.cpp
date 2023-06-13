@@ -2,7 +2,6 @@
 
 
 #include "CeilingLight.h"
-#include "Components/RectLightComponent.h"
 #include "Components/MeshComponent.h"
 
 // Sets default values
@@ -41,13 +40,50 @@ void ACeilingLight::Tick(float DeltaTime)
 
 void ACeilingLight::LightOff()
 {
+	Server_LightOff();
+}
+
+void ACeilingLight::Server_LightOff_Implementation()
+{
+	Multicast_LightOff();
+}
+
+bool ACeilingLight::Server_LightOff_Validate()
+{
+	return true;
+}
+
+void ACeilingLight::Multicast_LightOff_Implementation()
+{
 	LightComp->SetIntensity(0.0f);
 	Light->SetVisibility(false);
 }
 
 void ACeilingLight::LightOn()
 {
+	Server_LightOn();
+}
+
+void ACeilingLight::Server_LightOn_Implementation()
+{
+	Multicast_LightOn();
+}
+
+bool ACeilingLight::Server_LightOn_Validate()
+{
+	return true;
+}
+
+void ACeilingLight::Multicast_LightOn_Implementation()
+{
 	LightComp->SetIntensity(5000.0f);
 	Light->SetVisibility(true);
 }
 
+void ACeilingLight::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACeilingLight, Light);
+	DOREPLIFETIME(ACeilingLight, LightComp);
+}

@@ -212,6 +212,7 @@ bool AElevator::Server_LightOn_Validate()
 {
 	return true;
 }
+
 void AElevator::Multicast_LightOn_Implementation()
 {
 	Light1->SetVisibility(true);

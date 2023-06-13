@@ -42,7 +42,7 @@ void AGenerator::MyInteract_Implementation()
 
 	if (CollapsingFloor)
 	{
-		CollapsingFloor->FloorCollapsing2();
+		CollapsingFloor->FloorCollapsing();
 		UE_LOG(LogTemp, Warning, TEXT("The floor(1st) is Collapsed!"));
 	}
 
