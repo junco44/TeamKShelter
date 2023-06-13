@@ -22,7 +22,6 @@ ADoor::ADoor()
 
 	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
 
-	// ��Ʈ��ũ ���� ��� Ȱ��ȭ
 	bReplicates = true;
 	SetReplicateMovement(true);
 	bAlwaysRelevant = true;
@@ -33,7 +32,6 @@ void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// CurveFloat�� ��ȿ�� ��� ControlDoor �Լ��� Ÿ�Ӷ����� float ���� �̺�Ʈ�� ���ε�
 	if (CurveFloat)
 	{
 		FOnTimelineFloat TimelineProgress;
@@ -47,42 +45,35 @@ void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	// ������ ���� ������ ����� ���ڿ��� �׷���
-	FString value;
-	UEnum::GetValueAsString(GetLocalRole(), value);
-	DrawDebugString(GetWorld(), FVector(0, 0, 100), value, this, FColor::Green, DeltaTime);
+	//FString value;
+	//UEnum::GetValueAsString(GetLocalRole(), value);
+	//DrawDebugString(GetWorld(), FVector(0, 0, 100), value, this, FColor::Green, DeltaTime);
 }
 
 void ADoor::MyInteract_Implementation()
 {
-	// �������� �Լ��� ȣ��Ǵ��� Ȯ��
 	if (HasAuthority())
 	{
 		OpenDoor();
 	}
-}
-
-// Server_OpenDoor �Լ� ȣ��
-void ADoor::OpenDoor()
-{
-	Server_OpenDoor();
 	UE_LOG(LogTemp, Warning, TEXT("Interacted with Door!"));
 }
 
-// MulticastSyncDoorState �Լ� ȣ���Ͽ� ���� �� ���� ����ȭ
+void ADoor::OpenDoor()
+{
+	Server_OpenDoor();
+}
+
 void ADoor::Server_OpenDoor_Implementation()
 {
 	MulticastSyncDoorState(bIsOpen);
 }
 
-// Server_OpenDoor �Լ��� ��ȿ���� ����
-// Ŭ���̾�Ʈ�� �ش� �Լ��� ȣ���� ������ �ִ��� �����ϰ�, true�� ��ȯ
 bool ADoor::Server_OpenDoor_Validate()
 {
 	return true;
 }
 
-// �� ���� ������Ʈ �� ���¿� ���� Ÿ�Ӷ��� ���/�����
 void ADoor::MulticastSyncDoorState_Implementation(bool bNewDoorState)
 {
 	bIsOpen = bNewDoorState;
@@ -101,39 +92,29 @@ void ADoor::MulticastSyncDoorState_Implementation(bool bNewDoorState)
 		}
 	}
 
-	// �� ���� ���
 	bIsOpen = !bIsOpen;
 }
 
-// bIsOpen ������ �������� ����Ǿ��� �� MulticastSyncDoorState �Լ� ȣ��
 void ADoor::OnRep_bIsOpen()
 {
 	MulticastSyncDoorState(bIsOpen);
 }
 
-// �θ� Ŭ������ GetLifetimeReplicatedProps �Լ��� ȣ���Ͽ� �⺻ ���� ������ ������
 void ADoor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// Door�� bIsOpen ���� ���� ����
-	// DOREPLIFETIME ��ũ�δ� ������ �ش� ������ ���¸� �����ϵ��� �����ϴ� ����
-	// ���� ������ �߰��ϸ� ������ Ŭ���̾�Ʈ ���� �ش� ������ ���� ���°� ����ȭ��
 	DOREPLIFETIME(ADoor, Door);
 	DOREPLIFETIME_CONDITION(ADoor, bIsOpen, COND_SkipOwner);
-	// COND_SkipOwner ������ �����Ͽ� ������ �� �����ڸ� ������ �ٸ� ��� Ŭ���̾�Ʈ���� ����ȭ
 }
 
 void ADoor::ControlDoor(float Value)
 {
-	// ���� �ʱ� ȸ������ ��ǥ ȸ���� ����
 	FRotator DoorInitialRotation = FRotator(0.f, 0.f, 0.f);
 	FRotator DoorTargetRoatation = FRotator(0.f, DoorRotateAngle, 0.f);
 
-	// Value �Ű������� ����Ͽ� �ʱ� ȸ������ ��ǥ ȸ���� ���̸� ����
 	FRotator Rot = FMath::Lerp(DoorInitialRotation, DoorTargetRoatation, Value);
 
-	// Door ������Ʈ�� ��� ȸ���� ����
 	Door->SetRelativeRotation(Rot);
 }
 

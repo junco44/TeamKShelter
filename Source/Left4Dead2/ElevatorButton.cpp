@@ -43,38 +43,35 @@ void AElevatorButton::Tick(float DeltaTime)
 
 void AElevatorButton::MyInteract_Implementation()
 {
-	if (HasAuthority())
+	if (bDidTask)
 	{
-		if (bDidTask)
+		if (LightArray.Num() > 0)
 		{
-			if (LightArray.Num() > 0)
+			for (ACeilingLight* Light : LightArray)
 			{
-				for (ACeilingLight* Light : LightArray)
-				{
-					Light->LightOff();
-				}
-			}
-
-			if (CollapsingFloor)
-			{
-				CollapsingFloor->FloorCollapsing();
-				UE_LOG(LogTemp, Warning, TEXT("The Room4(1st)'s floor is Collapsed!"));
-				UE_LOG(LogTemp, Warning, TEXT("You should solve the Task!"));
-			}
-
-			if (Elevator)
-			{
-				Elevator->LightOff();
+				Light->LightOff();
 			}
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Now you're good to go!"));
 
-			if (Elevator)
-			{
-				Elevator->DoorTimeline->PlayFromStart();
-			}
+		if (CollapsingFloor)
+		{
+			CollapsingFloor->FloorCollapsing();
+			UE_LOG(LogTemp, Warning, TEXT("The Room4(1st)'s floor is Collapsed!"));
+			UE_LOG(LogTemp, Warning, TEXT("You should solve the Task!"));
+		}
+
+		if (Elevator)
+		{
+			Elevator->LightOff();
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Now you're good to go!"));
+
+		if (Elevator)
+		{
+			Elevator->DoorTimeline->PlayFromStart();
 		}
 	}
 }

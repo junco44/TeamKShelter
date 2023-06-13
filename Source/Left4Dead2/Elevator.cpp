@@ -88,9 +88,9 @@ void AElevator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FString value;
-	UEnum::GetValueAsString(GetLocalRole(), value);
-	DrawDebugString(GetWorld(), FVector(0, 0, 100), value, this, FColor::Green, DeltaTime);
+	//FString value;
+	//UEnum::GetValueAsString(GetLocalRole(), value);
+	//DrawDebugString(GetWorld(), FVector(0, 0, 100), value, this, FColor::Green, DeltaTime);
 }
 
 void AElevator::MyInteract_Implementation()

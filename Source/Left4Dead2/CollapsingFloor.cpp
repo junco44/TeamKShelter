@@ -13,12 +13,8 @@ ACollapsingFloor::ACollapsingFloor()
 	Floor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Floor"));
 	RootComponent = Floor;
 
-	CollapsedFloor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollapsedFloor"));
-	CollapsedFloor->SetupAttachment(RootComponent);
-
 	bReplicates = true;
 	bAlwaysRelevant = true;
-	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
@@ -37,12 +33,15 @@ void ACollapsingFloor::Tick(float DeltaTime)
 
 void ACollapsingFloor::FloorCollapsing()
 {
-	Server_FloorCollapsing_Implementation();
+	if (HasAuthority())
+	{
+		Server_FloorCollapsing();
+	}
 }
 
 void ACollapsingFloor::Server_FloorCollapsing_Implementation()
 {
-	Multicast_FloorCollapsing_Implementation();
+	Multicast_FloorCollapsing();
 }
 
 bool ACollapsingFloor::Server_FloorCollapsing_Validate()

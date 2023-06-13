@@ -28,10 +28,8 @@ public:
 	void FloorCollapsing();
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* CollapsedFloor;
 	UPROPERTY(VisibleAnywhere, Category = "Mesh", Replicated)
-		UStaticMeshComponent* Floor;
+	UStaticMeshComponent* Floor;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_FloorCollapsing();
