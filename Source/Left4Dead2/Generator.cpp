@@ -38,23 +38,26 @@ void AGenerator::Tick(float DeltaTime)
 
 void AGenerator::MyInteract_Implementation()
 {
-	GeneratorOn();
-
-	if (CollapsingFloor)
+	if (HasAuthority())
 	{
-		CollapsingFloor->FloorCollapsing();
-		UE_LOG(LogTemp, Warning, TEXT("The floor(1st) is Collapsed!"));
-	}
+		GeneratorOn();
 
-	if (TaskCheck)
-	{
-		TaskCheck->SetTask(false);
-		UE_LOG(LogTemp, Warning, TEXT("TaskCheck"));
-	}
+		if (CollapsingFloor)
+		{
+			CollapsingFloor->FloorCollapsing();
+			UE_LOG(LogTemp, Warning, TEXT("The floor(1st) is Collapsed!"));
+		}
 
-	if (Elevator)
-	{
-		Elevator->LightOn();
+		if (TaskCheck)
+		{
+			TaskCheck->SetTask(false);
+			UE_LOG(LogTemp, Warning, TEXT("TaskCheck"));
+		}
+
+		if (Elevator)
+		{
+			Elevator->LightOn();
+		}
 	}
 }
 

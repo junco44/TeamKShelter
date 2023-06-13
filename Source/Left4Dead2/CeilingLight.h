@@ -40,8 +40,6 @@ protected:
 	class UStaticMeshComponent* Light;
 	UPROPERTY(VisibleAnywhere, Category = "Light", Replicated)
 	class URectLightComponent* LightComp;
-	UPROPERTY(VisibleAnywhere, Category = "Light")
-	class URectLightComponent* LightComp2;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_LightOff();

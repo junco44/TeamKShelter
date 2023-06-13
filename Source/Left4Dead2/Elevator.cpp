@@ -62,7 +62,7 @@ AElevator::AElevator()
 	ElevatorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ElevatorTimeline"));
 
 	bReplicates = true;
-	SetReplicateMovement(false);
+	SetReplicateMovement(true);
 	bAlwaysRelevant = true;
 }
 
@@ -88,7 +88,6 @@ void AElevator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// 액터의 로컬 역할을 디버그 문자열로 그려줌
 	FString value;
 	UEnum::GetValueAsString(GetLocalRole(), value);
 	DrawDebugString(GetWorld(), FVector(0, 0, 100), value, this, FColor::Green, DeltaTime);
@@ -96,7 +95,7 @@ void AElevator::Tick(float DeltaTime)
 
 void AElevator::MyInteract_Implementation()
 {
-	if (ROLE_Authority)
+	if (HasAuthority())
 	{
 		CloseDoor();
 
@@ -136,7 +135,7 @@ void AElevator::CloseDoor()
 
 void AElevator::Server_CloseDoor_Implementation()
 {
-	Multicast_OpenDoor();
+	Multicast_CloseDoor();
 }
 
 bool AElevator::Server_CloseDoor_Validate()
@@ -155,7 +154,7 @@ void AElevator::Multicast_CloseDoor_Implementation()
 void AElevator::GoUp()
 {
 	Server_GoUp();
-	
+
 }
 
 void AElevator::Server_GoUp_Implementation()
@@ -173,8 +172,8 @@ void AElevator::Multicast_GoUp_Implementation()
 	if (!ElevatorTimeline->IsPlaying())
 	{
 		ElevatorTimeline->PlayFromStart();
-		UE_LOG(LogTemp, Warning, TEXT("Elevator is Going Up!"));
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Elevator is Going Up!"));
 }
 
 void AElevator::LightOff()
@@ -184,7 +183,7 @@ void AElevator::LightOff()
 
 void AElevator::Server_LightOff_Implementation()
 {
-	Multicast_GoUp();
+	Multicast_LightOff();
 }
 
 bool AElevator::Server_LightOff_Validate()
@@ -196,6 +195,7 @@ void AElevator::Multicast_LightOff_Implementation()
 {
 	Light1->SetVisibility(false);
 	Light2->SetVisibility(false);
+	UE_LOG(LogTemp, Warning, TEXT("Elevator Light's off."));
 }
 
 void AElevator::LightOn()
@@ -205,7 +205,7 @@ void AElevator::LightOn()
 
 void AElevator::Server_LightOn_Implementation()
 {
-	Multicast_GoUp();
+	Multicast_LightOn();
 }
 
 bool AElevator::Server_LightOn_Validate()
@@ -217,9 +217,9 @@ void AElevator::Multicast_LightOn_Implementation()
 {
 	Light1->SetVisibility(true);
 	Light2->SetVisibility(true);
+	UE_LOG(LogTemp, Warning, TEXT("Elevator Light's on."));
 }
 
-// 부모 클래스의 GetLifetimeReplicatedProps 함수를 호출하여 기본 복제 설정을 가져옴
 void AElevator::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -236,8 +236,6 @@ void AElevator::ControlElevator(float Value)
 
 	FVector NewElevatorLocation = FMath::Lerp(ElevatorInitialLocation, ElevatorTargetLocation, Value);
 	Elevator->SetRelativeLocation(NewElevatorLocation);
-
-	UE_LOG(LogTemp, Warning, TEXT("Elevator's going up."));
 }
 
 void AElevator::ControlDoor(float Value)

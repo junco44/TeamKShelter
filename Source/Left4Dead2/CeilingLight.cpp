@@ -19,9 +19,8 @@ ACeilingLight::ACeilingLight()
 	LightComp = CreateDefaultSubobject<URectLightComponent>(TEXT("LightComp"));
 	LightComp->SetupAttachment(RootComponent);
 
-	LightComp2 = CreateDefaultSubobject<URectLightComponent>(TEXT("LightComp2"));
-	LightComp2->SetupAttachment(LightComp);
-
+	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned

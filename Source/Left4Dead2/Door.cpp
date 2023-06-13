@@ -22,9 +22,9 @@ ADoor::ADoor()
 
 	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
 
-	// ³×Æ®¿öÅ© º¹Á¦ ±â´É È°¼ºÈ­
+	// ï¿½ï¿½Æ®ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
 	bReplicates = true;
-	SetReplicateMovement(false);
+	SetReplicateMovement(true);
 	bAlwaysRelevant = true;
 }
 
@@ -33,7 +33,7 @@ void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// CurveFloatÀÌ À¯È¿ÇÑ °æ¿ì ControlDoor ÇÔ¼ö¸¦ Å¸ÀÓ¶óÀÎÀÇ float ÁøÇà ÀÌº¥Æ®¿¡ ¹ÙÀÎµù
+	// CurveFloatï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ ControlDoor ï¿½Ô¼ï¿½ï¿½ï¿½ Å¸ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ float ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½
 	if (CurveFloat)
 	{
 		FOnTimelineFloat TimelineProgress;
@@ -47,7 +47,7 @@ void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	// ¾×ÅÍÀÇ ·ÎÄÃ ¿ªÇÒÀ» µð¹ö±× ¹®ÀÚ¿­·Î ±×·ÁÁÜ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½
 	FString value;
 	UEnum::GetValueAsString(GetLocalRole(), value);
 	DrawDebugString(GetWorld(), FVector(0, 0, 100), value, this, FColor::Green, DeltaTime);
@@ -55,34 +55,34 @@ void ADoor::Tick(float DeltaTime)
 
 void ADoor::MyInteract_Implementation()
 {
-	// ¼­¹ö¿¡¼­ ÇÔ¼ö°¡ È£ÃâµÇ´ÂÁö È®ÀÎ
-	if (ROLE_Authority)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+	if (HasAuthority())
 	{
 		OpenDoor();
 	}
 }
 
-// Server_OpenDoor ÇÔ¼ö È£Ãâ
+// Server_OpenDoor ï¿½Ô¼ï¿½ È£ï¿½ï¿½
 void ADoor::OpenDoor()
 {
 	Server_OpenDoor();
 	UE_LOG(LogTemp, Warning, TEXT("Interacted with Door!"));
 }
 
-// MulticastSyncDoorState ÇÔ¼ö È£ÃâÇÏ¿© ÇöÀç ¹® »óÅÂ µ¿±âÈ­
+// MulticastSyncDoorState ï¿½Ô¼ï¿½ È£ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
 void ADoor::Server_OpenDoor_Implementation()
 {
 	MulticastSyncDoorState(bIsOpen);
 }
 
-// Server_OpenDoor ÇÔ¼öÀÇ À¯È¿¼ºÀ» °ËÁõ
-// Å¬¶óÀÌ¾ðÆ®°¡ ÇØ´ç ÇÔ¼ö¸¦ È£ÃâÇÒ ±ÇÇÑÀÌ ÀÖ´ÂÁö °ËÁõÇÏ°í, true¸¦ ¹ÝÈ¯
+// Server_OpenDoor ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+// Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, trueï¿½ï¿½ ï¿½ï¿½È¯
 bool ADoor::Server_OpenDoor_Validate()
 {
 	return true;
 }
 
-// ¹® »óÅÂ ¾÷µ¥ÀÌÆ® ¹× »óÅÂ¿¡ µû¶ó Å¸ÀÓ¶óÀÎ Àç»ý/¿ªÀç»ý
+// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ó¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½
 void ADoor::MulticastSyncDoorState_Implementation(bool bNewDoorState)
 {
 	bIsOpen = bNewDoorState;
@@ -101,39 +101,39 @@ void ADoor::MulticastSyncDoorState_Implementation(bool bNewDoorState)
 		}
 	}
 
-	// ¹® »óÅÂ Åä±Û
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	bIsOpen = !bIsOpen;
 }
 
-// bIsOpen º¯¼ö°¡ ¼­¹ö¿¡¼­ º¯°æµÇ¾úÀ» ¶§ MulticastSyncDoorState ÇÔ¼ö È£Ãâ
+// bIsOpen ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ MulticastSyncDoorState ï¿½Ô¼ï¿½ È£ï¿½ï¿½
 void ADoor::OnRep_bIsOpen()
 {
 	MulticastSyncDoorState(bIsOpen);
 }
 
-// ºÎ¸ð Å¬·¡½ºÀÇ GetLifetimeReplicatedProps ÇÔ¼ö¸¦ È£ÃâÇÏ¿© ±âº» º¹Á¦ ¼³Á¤À» °¡Á®¿È
+// ï¿½Î¸ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ GetLifetimeReplicatedProps ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½âº» ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void ADoor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// Door¿Í bIsOpen º¯¼ö º¹Á¦ ¼³Á¤
-	// DOREPLIFETIME ¸ÅÅ©·Î´Â º¯¼ö¿Í ÇØ´ç º¯¼öÀÇ »óÅÂ¸¦ º¹Á¦ÇÏµµ·Ï ÁöÁ¤ÇÏ´Â ¿ªÇÒ
-	// º¹Á¦ ¼³Á¤À» Ãß°¡ÇÏ¸é ¼­¹ö¿Í Å¬¶óÀÌ¾ðÆ® °£¿¡ ÇØ´ç º¯¼öÀÇ °ª°ú »óÅÂ°¡ µ¿±âÈ­µÊ
+	// Doorï¿½ï¿½ bIsOpen ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// DOREPLIFETIME ï¿½ï¿½Å©ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½
 	DOREPLIFETIME(ADoor, Door);
 	DOREPLIFETIME_CONDITION(ADoor, bIsOpen, COND_SkipOwner);
-	// COND_SkipOwner Á¶°ÇÀ» ÁöÁ¤ÇÏ¿© º¹Á¦ÇÒ ¶§ ¼ÒÀ¯ÀÚ¸¦ Á¦¿ÜÇÑ ´Ù¸¥ ¸ðµç Å¬¶óÀÌ¾ðÆ®¿¡°Ô µ¿±âÈ­
+	// COND_SkipOwner ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
 }
 
 void ADoor::ControlDoor(float Value)
 {
-	// ¹®ÀÇ ÃÊ±â È¸Àü°ª°ú ¸ñÇ¥ È¸Àü°ª Á¤ÀÇ
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	FRotator DoorInitialRotation = FRotator(0.f, 0.f, 0.f);
 	FRotator DoorTargetRoatation = FRotator(0.f, DoorRotateAngle, 0.f);
 
-	// Value ¸Å°³º¯¼ö¿¡ ±â¹ÝÇÏ¿© ÃÊ±â È¸Àü°ª°ú ¸ñÇ¥ È¸Àü°ª »çÀÌ¸¦ º¸°£
+	// Value ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Ê±ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	FRotator Rot = FMath::Lerp(DoorInitialRotation, DoorTargetRoatation, Value);
 
-	// Door ÄÄÆ÷³ÍÆ®ÀÇ »ó´ë È¸Àü°ª ¼³Á¤
+	// Door ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	Door->SetRelativeRotation(Rot);
 }
 

@@ -28,9 +28,9 @@ public:
 	AGenerator();
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* Generator;
+	class UStaticMeshComponent* Generator;
 	UPROPERTY(VisibleAnywhere, Category = "BoxCollision")
-		class UBoxComponent* BoxCollision;
+	class UBoxComponent* BoxCollision;
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,12 +45,12 @@ public:
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
-		TArray<ACeilingLight*> LightArray;
+	TArray<ACeilingLight*> LightArray;
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
-		ACollapsingFloor* CollapsingFloor;
+	ACollapsingFloor* CollapsingFloor;
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
-		AElevatorButton* TaskCheck;
+	AElevatorButton* TaskCheck;
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
-		AElevator* Elevator;
+	AElevator* Elevator;
 };
 

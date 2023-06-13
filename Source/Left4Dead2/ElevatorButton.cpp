@@ -16,6 +16,8 @@ AElevatorButton::AElevatorButton()
 	Button = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Button"));
 	Button->SetupAttachment(RootComponent);
 
+	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned
@@ -41,38 +43,40 @@ void AElevatorButton::Tick(float DeltaTime)
 
 void AElevatorButton::MyInteract_Implementation()
 {
-	if (bDidTask)
+	if (HasAuthority())
 	{
-		if (LightArray.Num() > 0)
+		if (bDidTask)
 		{
-			for (ACeilingLight* Light : LightArray)
+			if (LightArray.Num() > 0)
 			{
-				Light->LightOff();
+				for (ACeilingLight* Light : LightArray)
+				{
+					Light->LightOff();
+				}
+			}
+
+			if (CollapsingFloor)
+			{
+				CollapsingFloor->FloorCollapsing();
+				UE_LOG(LogTemp, Warning, TEXT("The Room4(1st)'s floor is Collapsed!"));
+				UE_LOG(LogTemp, Warning, TEXT("You should solve the Task!"));
+			}
+
+			if (Elevator)
+			{
+				Elevator->LightOff();
 			}
 		}
-
-		if (CollapsingFloor)
+		else
 		{
-			CollapsingFloor->FloorCollapsing();
-			UE_LOG(LogTemp, Warning, TEXT("The Room4(1st)'s floor is Collapsed!"));
-			UE_LOG(LogTemp, Warning, TEXT("You should solve the Task!"));
-		}
+			UE_LOG(LogTemp, Warning, TEXT("Now you're good to go!"));
 
-		if (Elevator)
-		{
-			Elevator->LightOff();
+			if (Elevator)
+			{
+				Elevator->DoorTimeline->PlayFromStart();
+			}
 		}
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Now you're good to go!"));
-
-		if (Elevator)
-		{
-			Elevator->DoorTimeline->PlayFromStart();
-		}
-	}
-
 }
 
 void AElevatorButton::SetTask(bool bFlag)
