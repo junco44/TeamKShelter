@@ -11,7 +11,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class LEFT4DEAD2_API UBTTask_Chase : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()

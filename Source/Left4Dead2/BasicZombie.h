@@ -12,7 +12,7 @@ class UStaticMeshComponent;
 class UBoxComponent;
 
 UCLASS()
-class LEFT4DEAD2_API ABasicZombie : public ACharacter, public IGenericTeamAgentInterface
+class LEFT4DEAD2_API ABasicZombie : public ACharacter //public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -42,9 +42,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Replicated, Category = "Variable")
 	bool flag = false;
 
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-	void CheckHP(bool Check);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_CheckHP(bool CheckCount, bool Checkflag);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_CheckHP(bool CheckCount, bool Checkflag);
+
+	void CheckHP(bool CheckCount, bool Checkflag);
 
 	UFUNCTION(BlueprintCallable, Category = "Function")
 	void UpdateSpeed(UPARAM(DisplayName = "Speed") float Speed);
@@ -77,7 +81,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	ABasicZombie* BasicZombie_CPP;
 	ASystemChar* PlayerCharacter_CPP;
+	ACharacter* TargetCharacter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* Body;

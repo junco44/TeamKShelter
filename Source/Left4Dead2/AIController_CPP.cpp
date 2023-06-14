@@ -6,6 +6,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "ShootingPlayerState_CPP.h"
 #include "SystemChar.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
@@ -54,9 +55,20 @@ UBlackboardComponent* AAIController_CPP::get_blackboard() const
 
 void AAIController_CPP::on_target_detected(AActor* actor, FAIStimulus const stimulus)
 {
-	if (auto const PlayerCharacter = Cast<ASystemChar>(actor))
+	if (actor && actor->IsA<ASystemChar>())
 	{
+		Detected_Actor++;
+		UE_LOG(LogTemp, Warning, TEXT("Detected_Actor : Added"));
+		UE_LOG(LogTemp, Warning, TEXT("Detected_Actor: %d"), Detected_Actor);
 		get_blackboard()->SetValueAsBool(BB_Keys::can_see_player, stimulus.WasSuccessfullySensed());
+
+		if (get_blackboard()->GetValueAsBool(BB_Keys::can_see_player) == false)
+		{
+			Detected_Actor--;
+			UE_LOG(LogTemp, Warning, TEXT("Detected_Actor : Subtracted"));
+			UE_LOG(LogTemp, Warning, TEXT("Detected_Actor: %d"), Detected_Actor);
+			stimulus.SensingFailed;
+		}
 	}
 }
 

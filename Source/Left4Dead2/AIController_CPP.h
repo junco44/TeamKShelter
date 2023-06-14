@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ShootingPlayerState_CPP.h"
 #include "AIController.h"
+#include "SystemChar.h"
 #include "Perception/AIPerceptionTypes.h"
 #include "AIController_CPP.generated.h"
 
@@ -19,6 +21,10 @@ public:
 	AAIController_CPP(FObjectInitializer const& object_initializer = FObjectInitializer::Get());
 	void BeginPlay() override;
 	void OnPossess(APawn* const pawn) override;
+
+	int32 Detected_Actor = 0;
+	AShootingPlayerState_CPP* PlayerState_CPP;
+	ASystemChar* PlayerCharacter;
 
 	class UBlackboardComponent* get_blackboard() const;
 

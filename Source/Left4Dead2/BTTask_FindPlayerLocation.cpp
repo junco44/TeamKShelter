@@ -7,6 +7,7 @@
 #include "AIController_CPP.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "BlackBoard_Keys.h"
@@ -19,9 +20,7 @@ UBTTask_FindPlayerLocation::UBTTask_FindPlayerLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)
 {
-	
 	// 플레이어 캐릭터 & AI Controller 가져오기 
-	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	auto const Controller = Cast<AAIController_CPP>(owner_comp.GetAIOwner());
 	auto const Enemy = Controller->GetCharacter();
 
@@ -31,8 +30,12 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 		BasicZombie->UpdateSpeed(700.0f);
 	}
 
+	ACharacter* TargetCharacter = (ACharacter*)Controller->get_blackboard()->GetValueAsObject(BB_Keys::Nearest_Player);
+
+	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
+
 	// 플레이어 캐릭터의 위치 가져오기
-	FVector const player_location = PlayerCharacter->GetActorLocation();
+	FVector const player_location = TargetCharacter->GetActorLocation();
 	if (search_random)
 	{
 		FNavLocation NavLocation;
@@ -43,7 +46,6 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 		{
 			Controller->get_blackboard()->SetValueAsVector(BB_Keys::Target_Location, NavLocation.Location);
 		}
-
 	}
 	else
 	{
